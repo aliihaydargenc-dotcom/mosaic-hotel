@@ -1347,3 +1347,205 @@ textarea {
     animation: none;
   }
 }
+
+.sidebar {
+  transition:
+    width 220ms ease,
+    padding 220ms ease;
+  background: linear-gradient(165deg, #29352d 0%, #202823 85%);
+  box-shadow: 3px 0 18px #2028230a;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.main-shell {
+  transition: margin-left 220ms ease;
+}
+.topbar-path {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.sidebar-toggle {
+  flex-shrink: 0;
+  color: var(--accent);
+  width: 32px;
+  height: 32px;
+}
+.sidebar-scrim {
+  display: none;
+}
+.sidebar nav button {
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+  position: relative;
+}
+.sidebar nav button.active {
+  background: #48533c;
+  box-shadow: inset 3px 0 #c4b67e;
+}
+.sidebar nav button svg {
+  flex-shrink: 0;
+}
+.sidebar-collapsed .sidebar {
+  width: 72px;
+  padding: 26px 9px 14px;
+}
+.sidebar-collapsed .main-shell {
+  margin-left: 72px;
+}
+.sidebar-collapsed .wordmark {
+  padding: 4px 0 25px;
+}
+.sidebar-collapsed .wordmark span {
+  font-size: 29px;
+  letter-spacing: 0;
+}
+.sidebar-collapsed .wordmark small,
+.sidebar-collapsed .sidebar-caption,
+.sidebar-collapsed .sidebar nav button span,
+.sidebar-collapsed .sidebar nav button > svg:last-child:not(:first-child),
+.sidebar-collapsed .sidebar-bottom > div {
+  display: none;
+}
+.sidebar-collapsed .sidebar nav {
+  margin-top: 25px;
+}
+.sidebar-collapsed .sidebar nav button {
+  justify-content: center;
+  padding: 0;
+}
+.sidebar-collapsed .sidebar-bottom {
+  justify-content: center;
+}
+.metric {
+  border-top: 2px solid #b2ba9b;
+  box-shadow: 0 3px 12px #26332705;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+.metric:nth-child(2) {
+  border-top-color: #bda876;
+}
+.metric:nth-child(3) {
+  border-top-color: #8eaaa1;
+}
+.metric:nth-child(4) {
+  border-top-color: #87946f;
+}
+.panel {
+  box-shadow: 0 3px 14px #26332704;
+}
+.button,
+.icon-button {
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+.button.primary {
+  box-shadow: 0 3px 8px #59623d20;
+}
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+@media (hover: hover) {
+  .metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px #2633270b;
+  }
+  .button.primary:hover {
+    box-shadow: 0 4px 12px #59623d30;
+  }
+}
+@media (max-width: 800px) {
+  .sidebar-collapsed .sidebar {
+    width: 62px;
+    padding: 18px 5px;
+  }
+  .sidebar-collapsed .main-shell,
+  .sidebar-expanded .main-shell {
+    margin-left: 62px;
+  }
+  .sidebar-expanded .sidebar {
+    width: 222px;
+    padding: 26px 15px 14px;
+    z-index: 30;
+  }
+  .sidebar-expanded .wordmark {
+    padding: 4px 16px 25px;
+  }
+  .sidebar-expanded .wordmark span {
+    font-size: 29px;
+    letter-spacing: 6px;
+  }
+  .sidebar-expanded .wordmark small,
+  .sidebar-expanded .sidebar-caption,
+  .sidebar-expanded .sidebar nav button span,
+  .sidebar-expanded .sidebar nav button > svg:last-child:not(:first-child),
+  .sidebar-expanded .sidebar-bottom > div,
+  .sidebar-expanded .sidebar-bottom small {
+    display: block;
+  }
+  .sidebar-expanded .sidebar nav {
+    margin-top: 0;
+  }
+  .sidebar-expanded .sidebar nav button {
+    padding: 0 13px;
+    justify-content: flex-start;
+  }
+  .sidebar-expanded .sidebar-bottom .avatar {
+    display: grid;
+  }
+  .sidebar-expanded .sidebar-scrim {
+    display: block;
+    position: fixed;
+    inset: 0 0 0 222px;
+    background: #20282340;
+    border: 0;
+    z-index: 25;
+    animation: backdrop-enter 160ms ease-out;
+  }
+  .topbar-path > span {
+    display: none;
+  }
+  .topbar-path {
+    flex-shrink: 0;
+  }
+  .topbar > .row {
+    width: auto;
+    min-width: 0;
+    gap: 6px;
+  }
+  .topbar select {
+    min-width: 110px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .main-shell,
+  .sidebar nav button,
+  .metric,
+  .button,
+  .icon-button {
+    transition: none;
+  }
+  .sidebar-scrim {
+    animation: none !important;
+  }
+  .metric:hover,
+  .button:active:not(:disabled) {
+    transform: none;
+  }
+}
+@media print {
+  .sidebar-scrim,
+  .sidebar-toggle {
+    display: none !important;
+  }
+  .main-shell {
+    margin-left: 0 !important;
+  }
+}

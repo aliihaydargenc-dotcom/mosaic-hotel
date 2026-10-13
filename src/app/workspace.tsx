@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 import {
+  PanelLeftClose,
+  PanelLeftOpen,
   LayoutDashboard,
   FileText,
   Package,
@@ -275,6 +277,35 @@ export default function Workspace({
 }) {
   const [s, setState] = useState(initial);
   const [tab, setTab] = useState("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  useEffect(() => {
+    try {
+      setSidebarCollapsed(
+        window.matchMedia("(max-width: 800px)").matches ||
+          localStorage.getItem("mosaic-sidebar") === "collapsed",
+      );
+    } catch {
+      setSidebarCollapsed(window.matchMedia("(max-width: 800px)").matches);
+    }
+  }, []);
+  const toggleSidebar = () => {
+    const next = !sidebarCollapsed;
+    setSidebarCollapsed(next);
+    try {
+      localStorage.setItem("mosaic-sidebar", next ? "collapsed" : "expanded");
+    } catch {}
+  };
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (
+        event.key === "Escape" &&
+        window.matchMedia("(max-width: 800px)").matches
+      )
+        setSidebarCollapsed(true);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const [period, setPeriod] = useState(initial.periods.at(-1)!.id);
   const [modal, setModal] = useState<{ kind: string; data?: unknown } | null>(
     null,
@@ -333,10 +364,12 @@ export default function Workspace({
   const p = s.periods.find((p) => p.id === period)!;
   return (
     <Ctx.Provider value={{ s, actor, period, send, show, close, busy, demo }}>
-      <div className="app-shell">
-        <aside className="sidebar">
+      <div
+        className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : "sidebar-expanded"}`}
+      >
+        <aside id="main-navigation" className="sidebar">
           <div className="wordmark">
-            <span>MOSAIC</span>
+            <span>{sidebarCollapsed ? "M" : "MOSAIC"}</span>
             <small>HOTEL ISTANBUL</small>
           </div>
           <div className="sidebar-caption">AMBAR & MALİYET</div>
@@ -351,6 +384,8 @@ export default function Workspace({
                 onClick={() => {
                   setTab(key);
                   setError("");
+                  if (window.matchMedia("(max-width: 800px)").matches)
+                    setSidebarCollapsed(true);
                 }}
               >
                 <Icon size={18} />
@@ -384,12 +419,35 @@ export default function Workspace({
             </button>
           </div>
         </aside>
+        {!sidebarCollapsed && (
+          <button
+            className="sidebar-scrim"
+            aria-label="Menüyü kapat"
+            onClick={() => setSidebarCollapsed(true)}
+          />
+        )}
         <div className="main-shell">
           <header className="topbar">
-            <span>
-              Mosaic Hotel <span className="topbar-divider">/</span>{" "}
-              <strong>{nav.find((n) => n[0] === tab)?.[1]}</strong>
-            </span>
+            <div className="topbar-path">
+              <button
+                className="icon-button sidebar-toggle"
+                onClick={toggleSidebar}
+                aria-label={sidebarCollapsed ? "Menüyü aç" : "Menüyü daralt"}
+                title={sidebarCollapsed ? "Menüyü aç" : "Menüyü daralt"}
+                aria-expanded={!sidebarCollapsed}
+                aria-controls="main-navigation"
+              >
+                {sidebarCollapsed ? (
+                  <PanelLeftOpen size={19} />
+                ) : (
+                  <PanelLeftClose size={19} />
+                )}
+              </button>
+              <span>
+                Mosaic Hotel <span className="topbar-divider">/</span>{" "}
+                <strong>{nav.find((n) => n[0] === tab)?.[1]}</strong>
+              </span>
+            </div>
             <div className="row">
               {demo ? (
                 <>
