@@ -24,7 +24,7 @@ Kapanış snapshot'ı ürün adını, grubunu, birimini ve kişi sayısını da 
 
 ## Sonuçların sınırı
 
-Yönetilen PostgreSQL sağlayıcısına, gerçek Vercel hesabına veya özel domaine dağıtım yapılmadı. Yeni bir bulut görevinin snapshot'tan geri yüklenmesi ve yayın sonrası yeniden bağlanması doğrulanmadı. GitHub'a push yapılmadı; uygulama dosyaları `mosaic-hotel` çalışma checkout'unda duruyor. Depo başlangıçta commit içermiyordu.
+Yönetilen PostgreSQL sağlayıcısına, gerçek Vercel hesabına veya özel domaine dağıtım yapılmadı. Yeni bir bulut görevinin snapshot'tan geri yüklenmesi ve yayın sonrası yeniden bağlanması doğrulanmadı. Doğrulanmış uygulama kaynakları ve belgeler GitHub deposunun `main` dalına aktarıldı; `.local/`, oturum anahtarları, örnek veritabanı ve geçici test dosyaları Git'e eklenmedi. Depo başlangıçta commit içermiyordu.
 
 OCR testleri kontrollü fakat gerçek PDF/PNG/JPEG dosyalarıyla yapıldı. Otelin tedarikçi faturalarındaki doğruluk, eğik/karanlık fotoğraflar, ambalaj dönüşümleri ve tedarikçiye özgü tablo düzenleri pilotta ölçülmeli. Önceki dönem karşılaştırması dönem verisi varsa çalışır; otelin gerçek geçmiş verisi henüz yok.
 
