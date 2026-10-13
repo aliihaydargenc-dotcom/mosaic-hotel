@@ -10,3 +10,4 @@ public/pdf/
 public/third-party-notices.txt
 *.tsbuildinfo
 next-env.d.ts
+.vercel
