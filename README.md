@@ -35,16 +35,18 @@ Testler sadece ayrı bir geliştirme/test veritabanına uygulanmalı; gerçek st
 
 Bu depo GitHub'a gönderilip Vercel'de Next.js projesi olarak içe aktarılır. Kurulum `npm ci`, build `npm run build`. Vercel Node.js 24 seçilir. Yönetilen PostgreSQL bağlantısı ayrıca gerekir. Üretim veritabanı boş başlar.
 
-Vercel proje ayarlarına aşağıdaki değerleri güvenli biçimde girin; değerleri kaynak koduna veya sohbete koymayın:
+İlk kurulumda varsayılan giriş **kullanıcı: `admin`, parola: `admin`**. Mevcut kullanıcılar ve sonradan değiştirilen parolalar korunur.
+
+Vercel proje ayarlarında `DATABASE_URL` gereklidir. Diğer ayarlar isteğe bağlıdır:
 
 | Değişken                   | Amaç                                                                      |
 | -------------------------- | ------------------------------------------------------------------------- |
 | `DATABASE_URL`             | Kalıcı PostgreSQL bağlantısı; sağlayıcının havuzlu/TLS doğrulamalı URL'si |
-| `SESSION_SECRET`           | En az 32 karakter rastgele oturum imza anahtarı                           |
-| `BOOTSTRAP_ADMIN_EMAIL`    | İlk yönetici e-postası                                                    |
-| `BOOTSTRAP_ADMIN_PASSWORD` | İlk yöneticinin en az 12 karakter benzersiz parolası                      |
+| `SESSION_SECRET`           | İsteğe bağlı; yoksa rastgele üretilip veritabanında saklanır              |
+| `BOOTSTRAP_ADMIN_EMAIL`    | İsteğe bağlı; varsayılan kullanıcı adı `admin`                            |
+| `BOOTSTRAP_ADMIN_PASSWORD` | İsteğe bağlı; varsayılan `admin`, özel parola en az 12 karakter           |
 
-`MOSAIC_LOCAL_MODE` üretimde ayarlanmaz. İlk yönetici DB'de oluşturulduktan sonra bootstrap parolası Vercel ayarlarından kaldırılabilir. Oturum anahtarı kalır. Bağlantı bilgileri, parolalar ve oturum anahtarı Git'e girmez. Özel domain kurulumdan sonra ayrıca bağlanabilir; bu çalışmada domain satın alınmadı.
+`MOSAIC_LOCAL_MODE` üretimde ayarlanmaz. İlk yönetici DB'de oluşturulduktan sonra bootstrap parolası Vercel ayarlarından kaldırılabilir. Otomatik oturum anahtarı veritabanında kalır. Bağlantı bilgileri, parolalar ve oturum anahtarı Git'e girmez. Özel domain kurulumdan sonra ayrıca bağlanabilir; bu çalışmada domain satın alınmadı.
 
 ## Belgeler
 

@@ -1,5 +1,7 @@
 # Doğrulama kaydı
 
+Son giriş güncellemesi: yeni Vercel/PostgreSQL kurulumunda admin/admin hesabı oluşturulması, yanlış parolanın reddi ve panel erişimi gerçek üretim sunucusunda Chromium ile doğrulandı. Ayrı soğuk başlangıçta otomatik oturum anahtarı ve değiştirilmiş yönetici parolası korundu. 21 test ve üretim derlemesi geçti. SESSION_SECRET ve bootstrap değişkenleri artık isteğe bağlıdır; DATABASE_URL gereklidir.
+
 13 Ekim 2026; Node.js 24.19.0, npm 11.9.0, Linux, Chromium. Kontroller gerçek otel verisiyle yapılmadı.
 
 | Kontrol                              | Sonuç         | Kapsam                                                                                                                                                                                                                                                           |

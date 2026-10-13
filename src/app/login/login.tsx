@@ -42,10 +42,10 @@ export default function Login({ local }: { local: boolean }) {
         <span className="eyebrow">OPERASYON PORTALI</span>
         <h2>Oturum açın</h2>
         <label>
-          E-posta
+          Kullanıcı adı veya e-posta
           <input
             name="email"
-            type="email"
+            type="text"
             autoComplete="username"
             required={!local}
           />

@@ -136,7 +136,7 @@ export async function login(
       };
     })
     .then((a) => {
-      if (!a.id) throw new UserFacingError("E-posta veya parola hatalı.");
+      if (!a.id) throw new UserFacingError("Kullanıcı adı veya parola hatalı.");
       return a;
     });
 }

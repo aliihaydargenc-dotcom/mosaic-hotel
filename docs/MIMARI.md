@@ -28,7 +28,7 @@ Her değişiklik PostgreSQL transaction içinde `SELECT ... FOR UPDATE` ile gün
 
 ## Erişim ve belge sınırları
 
-Geliştirme örnek rolleri yalnızca `MOSAIC_LOCAL_MODE=true`, DATABASE_URL olmadan ve Vercel dışında etkinleşir. Vercel'de bu değişken verilse bile yerel veritabanı veya parolasız örnek oturumu açılmaz. Üretimde PostgreSQL, en az 32 karakterlik oturum anahtarı ve ilk yönetici gereklidir. Üretim veritabanı örnek malzemelerle doldurulmaz.
+Geliştirme örnek rolleri yalnızca `MOSAIC_LOCAL_MODE=true`, DATABASE_URL olmadan ve Vercel dışında etkinleşir. Vercel'de bu değişken verilse bile yerel veritabanı veya parolasız örnek oturumu açılmaz. Üretimde PostgreSQL gereklidir. İlk yönetici, özel bootstrap ayarı yoksa admin/admin olarak bir kez oluşturulur; mevcut hesaplar değiştirilmez. Özel oturum anahtarı verilmezse rastgele anahtar veritabanında saklanır ve sunucu yeniden başladığında korunur. Üretim veritabanı örnek malzemelerle doldurulmaz.
 
 POST/PATCH/DELETE işlemleri Origin ve Host/protokol eşleşmesi ister. Belge türü PDF/PNG/JPEG ile sınırlanır, dosya imzası kontrol edilir, SHA-256 sunucuda yeniden hesaplanır. Dosya 2,5 MB, görsel 16 megapiksel, PDF 20 sayfa ile sınırlıdır. Belge API'si oturum ister, indirme `attachment` başlığıyla döner. Finans verileri ve belge ikilileri halka açık statik dizinde tutulmaz.
 

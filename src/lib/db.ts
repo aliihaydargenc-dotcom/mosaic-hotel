@@ -1,11 +1,13 @@
 import { PGlite } from "@electric-sql/pglite";
 import postgres from "postgres";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { randomBytes, scryptSync } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { join } from "node:path";
 import { blankState } from "./domain";
 import { sampleState } from "./seed";
 import type { State } from "./types";
+import { ensureInitialAdmin } from "./bootstrap";
+export { hashPassword } from "./password";
 export const localMode = () =>
   process.env.MOSAIC_LOCAL_MODE === "true" &&
   !process.env.VERCEL &&
@@ -26,7 +28,18 @@ const shared = globalThis as unknown as {
 export async function sessionSecret() {
   if (process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 32)
     return process.env.SESSION_SECRET;
-  if (!localMode()) throw new Error("SESSION_SECRET en az 32 karakter olmalı.");
+  if (!localMode()) {
+    const db = await database();
+    await db.query(
+      "INSERT INTO mosaic_settings (key,value) VALUES ($1,$2) ON CONFLICT(key) DO NOTHING",
+      ["session-secret", randomBytes(48).toString("hex")],
+    );
+    const { rows } = await db.query<{ value: string }>(
+      "SELECT value FROM mosaic_settings WHERE key=$1",
+      ["session-secret"],
+    );
+    return rows[0].value;
+  }
   shared.mosaicSecret ??= (async () => {
     await mkdir(join(process.cwd(), ".local"), { recursive: true });
     const path = join(process.cwd(), ".local/session-secret");
@@ -39,10 +52,6 @@ export async function sessionSecret() {
     }
   })();
   return shared.mosaicSecret;
-}
-export function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  return `${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
 }
 async function createDB(): Promise<DB> {
   let db: DB;
@@ -88,7 +97,8 @@ async function createDB(): Promise<DB> {
     CREATE TABLE IF NOT EXISTS mosaic_users (id text PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, role text NOT NULL CHECK(role IN ('manager','storekeeper','viewer')), password_hash text NOT NULL, active boolean NOT NULL DEFAULT true);
     CREATE TABLE IF NOT EXISTS mosaic_auth_attempts (email text PRIMARY KEY, attempts integer NOT NULL, since timestamptz NOT NULL);
     CREATE TABLE IF NOT EXISTS mosaic_requests (id text PRIMARY KEY, actor text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
-    CREATE TABLE IF NOT EXISTS mosaic_documents (invoice_id text PRIMARY KEY, data bytea NOT NULL, mime text NOT NULL, name text NOT NULL, hash text NOT NULL);`;
+    CREATE TABLE IF NOT EXISTS mosaic_documents (invoice_id text PRIMARY KEY, data bytea NOT NULL, mime text NOT NULL, name text NOT NULL, hash text NOT NULL);
+    CREATE TABLE IF NOT EXISTS mosaic_settings (key text PRIMARY KEY, value text NOT NULL);`;
   for (const statement of schema.split(";").filter((s) => s.trim()))
     await db.query(statement);
   const state = localMode() ? sampleState() : blankState();
@@ -96,29 +106,7 @@ async function createDB(): Promise<DB> {
     "INSERT INTO mosaic_state (id,data) VALUES (1,$1::jsonb) ON CONFLICT(id) DO NOTHING",
     [state],
   );
-  if (!localMode()) {
-    const { rows } = await db.query<{ n: string }>(
-      "SELECT count(*) AS n FROM mosaic_users",
-    );
-    if (Number(rows[0].n) === 0) {
-      const email = process.env.BOOTSTRAP_ADMIN_EMAIL?.toLowerCase();
-      const password = process.env.BOOTSTRAP_ADMIN_PASSWORD;
-      if (!email || !password || password.length < 12)
-        throw new Error(
-          "İlk yönetici için BOOTSTRAP_ADMIN_EMAIL ve en az 12 karakterli BOOTSTRAP_ADMIN_PASSWORD gerekli.",
-        );
-      await db.query(
-        "INSERT INTO mosaic_users (id,email,name,role,password_hash) VALUES ($1,$2,$3,$4,$5) ON CONFLICT(email) DO NOTHING",
-        [
-          "initial-manager",
-          email,
-          "Yönetici",
-          "manager",
-          hashPassword(password),
-        ],
-      );
-    }
-  }
+  if (!localMode()) await ensureInitialAdmin(db.query);
   return db;
 }
 export function database() {
