@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 export default function Login({ local }: { local: boolean }) {
   const [error, setError] = useState("");
@@ -67,6 +68,9 @@ export default function Login({ local }: { local: boolean }) {
         <button className="button primary" disabled={busy}>
           {busy ? "Bağlanıyor…" : "Oturum aç"}
         </button>
+        <Link href="/demo" className="button demo-entry">
+          Demoyu göster
+        </Link>
         {local && (
           <div className="demo-login">
             <span>Yerel deneme ortamı · örnek kayıtlar</span>

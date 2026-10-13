@@ -67,3 +67,7 @@ Tedarikçi faturalarındaki evrensel otomatik tablo tanıma, irsaliye/fatura eş
 - Yedekleme, geri yükleme, veri saklama süresi ve yönetilen PostgreSQL sağlayıcısı.
 
 Bu maddeler ilk sürümün geliştirme ortamında çalışmasını engellemez; otelin canlı verisine geçiş öncesinde işletme kabulünü belirler. Sunum, programın çalışan sürümü ve pilot kapsamı üzerinden daha sonra hazırlanacaktır.
+
+## Ziyaretçi demosu
+
+Giriş ekranındaki **Demoyu göster** bağlantısı `/demo` alanını açar. Önceki kapalı dönem, güncel alım ve tüketimler, sayım farkı, reçeteler, bekleyen fatura ve transfer bulunur. Operasyonlar aynı stok/maliyet kurallarıyla tarayıcı belleğinde çalışır; üretim API'sine veya veritabanına yazılmaz. Sıfırla, yenileme veya yeni ziyaret başlangıç verilerini geri getirir. Kullanıcı hesaplarının yönetimi demo içinde kapalıdır. Demo açmak gerçek kullanıcı oturumunu değiştirmez.

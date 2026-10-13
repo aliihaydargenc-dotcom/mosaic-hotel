@@ -1287,3 +1287,11 @@ textarea {
     font-size: 9px;
   }
 }
+
+.login-card > .demo-entry {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+  text-decoration: none;
+}

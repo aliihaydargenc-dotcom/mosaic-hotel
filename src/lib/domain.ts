@@ -1,6 +1,6 @@
 import { UserFacingError } from "./errors";
 import { z } from "zod";
-import { randomUUID } from "node:crypto";
+const randomUUID = () => globalThis.crypto.randomUUID();
 import { report, purchases } from "./reporting";
 import { mulDivRound } from "./math";
 export { report, purchases } from "./reporting";

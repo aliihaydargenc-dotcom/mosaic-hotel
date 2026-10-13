@@ -33,6 +33,7 @@ import type {
   Product,
   Place,
 } from "@/lib/types";
+import { applyCommand } from "@/lib/domain";
 import { report, purchases, purchaseReport } from "@/lib/reporting";
 import { recipeQuantity } from "@/lib/inventree-bom";
 import { parseInvoiceText, parseDecimal, readDocument } from "@/lib/documents";
@@ -81,6 +82,7 @@ type Context = {
   show: (kind: string, data?: unknown) => void;
   close: () => void;
   busy: boolean;
+  demo: boolean;
 };
 const Ctx = createContext<Context>(null!);
 const useApp = () => useContext(Ctx);
@@ -264,10 +266,12 @@ export default function Workspace({
   initial,
   actor,
   local,
+  demo = false,
 }: {
   initial: State;
   actor: Actor;
   local: boolean;
+  demo?: boolean;
 }) {
   const [s, setState] = useState(initial);
   const [tab, setTab] = useState("overview");
@@ -286,6 +290,11 @@ export default function Workspace({
     setBusy(true);
     setError("");
     try {
+      if (demo) {
+        setState(applyCommand(s, command, actor));
+        setToast("İşlem kaydedildi.");
+        return true;
+      }
       const r = await fetch("/api/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -323,7 +332,7 @@ export default function Workspace({
   };
   const p = s.periods.find((p) => p.id === period)!;
   return (
-    <Ctx.Provider value={{ s, actor, period, send, show, close, busy }}>
+    <Ctx.Provider value={{ s, actor, period, send, show, close, busy, demo }}>
       <div className="app-shell">
         <aside className="sidebar">
           <div className="wordmark">
@@ -367,7 +376,7 @@ export default function Workspace({
               title="Çıkış"
               aria-label="Çıkış"
               onClick={async () => {
-                await fetch("/api/session", { method: "DELETE" });
+                if (!demo) await fetch("/api/session", { method: "DELETE" });
                 location.href = "/login";
               }}
             >
@@ -382,7 +391,24 @@ export default function Workspace({
               <strong>{nav.find((n) => n[0] === tab)?.[1]}</strong>
             </span>
             <div className="row">
-              {local && <span className="local-label">Örnek kayıtlar</span>}
+              {demo ? (
+                <>
+                  <span className="local-label">Demo</span>
+                  <button
+                    className="text-button"
+                    onClick={() => {
+                      setState(structuredClone(initial));
+                      setPeriod(initial.periods.at(-1)!.id);
+                      setModal(null);
+                      setError("");
+                    }}
+                  >
+                    Sıfırla
+                  </button>
+                </>
+              ) : (
+                local && <span className="local-label">Örnek kayıtlar</span>
+              )}
               <select
                 aria-label="Dönem"
                 value={period}
@@ -1452,14 +1478,31 @@ function Reports({ mode = "cost" }: { mode?: "cost" | "purchase" }) {
   );
 }
 function Configuration() {
-  const { s, show, actor, period } = useApp();
+  const { s, show, actor, period, demo } = useApp();
   const [users, setUsers] = useState<(Actor & { active: boolean })[]>([]);
   useEffect(() => {
-    if (actor.role === "manager")
+    if (demo) {
+      setUsers([
+        {
+          id: "demo-manager",
+          name: "Deniz Yılmaz",
+          email: "deniz@mosaic.example",
+          role: "manager",
+          active: true,
+        },
+        {
+          id: "demo-storekeeper",
+          name: "Emre Kaya",
+          email: "emre@mosaic.example",
+          role: "storekeeper",
+          active: true,
+        },
+      ]);
+    } else if (actor.role === "manager")
       fetch("/api/users")
         .then((r) => (r.ok ? r.json() : []))
         .then(setUsers);
-  }, [actor.role, s.version]);
+  }, [actor.role, s.version, demo]);
   return (
     <>
       <Toolbar
@@ -1522,7 +1565,11 @@ function Configuration() {
         <section className="panel">
           <div className="panel-heading">
             <h2>Kullanıcılar</h2>
-            <button className="button small" onClick={() => show("user")}>
+            <button
+              className="button small"
+              disabled={demo}
+              onClick={() => show("user")}
+            >
               <Plus size={14} />
               Kullanıcı ekle
             </button>
@@ -1558,6 +1605,7 @@ function Configuration() {
                     <td>
                       <button
                         className="text-button"
+                        disabled={demo}
                         onClick={() => show("user", u)}
                       >
                         Düzenle
@@ -2300,8 +2348,22 @@ function InvoiceForm({ invoice }: { invoice?: Invoice }) {
               type="button"
               className="text-button"
               onClick={async () => {
-                const r = await fetch(`/api/documents/${invoice.id}`);
-                if (r.ok) download(await r.blob(), file.name);
+                if (file.data) {
+                  download(
+                    new Blob(
+                      [
+                        Uint8Array.from(atob(file.data), (c) =>
+                          c.charCodeAt(0),
+                        ),
+                      ],
+                      { type: file.mime },
+                    ),
+                    file.name,
+                  );
+                } else {
+                  const r = await fetch(`/api/documents/${invoice.id}`);
+                  if (r.ok) download(await r.blob(), file.name);
+                }
               }}
             >
               İndir
