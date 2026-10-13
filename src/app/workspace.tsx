@@ -1042,10 +1042,19 @@ function Counts() {
 }
 function MovementTable({ limit, types }: { limit?: number; types?: string[] }) {
   const { s, period, actor, show } = useApp();
+  const [page, setPage] = useState(0);
+  const tableRef = useRef<HTMLDivElement>(null);
+  useEffect(() => setPage(0), [period]);
   let list = s.movements
     .filter((m) => m.period === period && (!types || types.includes(m.type)))
     .reverse();
+  const total = list.length;
+  const currentPage = Math.min(page, Math.max(0, Math.ceil(total / 50) - 1));
+  useEffect(() => {
+    if (tableRef.current) tableRef.current.scrollTop = 0;
+  }, [currentPage, period]);
   if (limit) list = list.slice(0, limit);
+  else list = list.slice(currentPage * 50, (currentPage + 1) * 50);
   const names: Record<string, string> = {
     receipt: "Alım",
     transfer: "Transfer",
@@ -1054,66 +1063,92 @@ function MovementTable({ limit, types }: { limit?: number; types?: string[] }) {
     reversal: "Ters kayıt",
   };
   return list.length ? (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>İşlem</th>
-            <th>Malzeme</th>
-            <th>Kaynak / hedef</th>
-            <th className="numeric">Miktar</th>
-            <th className="numeric">Değer</th>
-            <th>Açıklama</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {list.map((m) => {
-            const p = s.products.find((p) => p.id === m.productId)!;
-            return (
-              <tr key={m.id}>
-                <td>
-                  <Badge>{names[m.type]}</Badge>
-                  <small>{m.date}</small>
-                </td>
-                <td>
-                  <strong>{p.name}</strong>
-                  <small>{p.code}</small>
-                </td>
-                <td>
-                  {[m.from, m.to]
-                    .filter(Boolean)
-                    .map((id) => s.places.find((p) => p.id === id)?.name)
-                    .join(" → ")}
-                </td>
-                <td className="numeric">
-                  {quantity(m.qty)} {p.unit}
-                </td>
-                <td className="numeric">{money(m.value)}</td>
-                <td className="ellipsis" title={m.note}>
-                  {m.note}
-                  {m.reversedBy && <small>Ters kayıt oluşturuldu</small>}
-                </td>
-                <td>
-                  {actor.role === "manager" &&
-                    !m.reversedBy &&
-                    m.type !== "reversal" &&
-                    s.periods.find((p) => p.id === period)?.status ===
-                      "open" && (
-                      <button
-                        className="text-button"
-                        onClick={() => show("reverse", m.id)}
-                      >
-                        Geri al
-                      </button>
-                    )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <div className="table-wrap" ref={tableRef}>
+        <table>
+          <thead>
+            <tr>
+              <th>İşlem</th>
+              <th>Malzeme</th>
+              <th>Kaynak / hedef</th>
+              <th className="numeric">Miktar</th>
+              <th className="numeric">Değer</th>
+              <th>Açıklama</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((m) => {
+              const p = s.products.find((p) => p.id === m.productId)!;
+              return (
+                <tr key={m.id}>
+                  <td>
+                    <Badge>{names[m.type]}</Badge>
+                    <small>{m.date}</small>
+                  </td>
+                  <td>
+                    <strong>{p.name}</strong>
+                    <small>{p.code}</small>
+                  </td>
+                  <td>
+                    {[m.from, m.to]
+                      .filter(Boolean)
+                      .map((id) => s.places.find((p) => p.id === id)?.name)
+                      .join(" → ")}
+                  </td>
+                  <td className="numeric">
+                    {quantity(m.qty)} {p.unit}
+                  </td>
+                  <td className="numeric">{money(m.value)}</td>
+                  <td className="ellipsis" title={m.note}>
+                    {m.note}
+                    {m.reversedBy && <small>Ters kayıt oluşturuldu</small>}
+                  </td>
+                  <td>
+                    {actor.role === "manager" &&
+                      !m.reversedBy &&
+                      m.type !== "reversal" &&
+                      s.periods.find((p) => p.id === period)?.status ===
+                        "open" && (
+                        <button
+                          className="text-button"
+                          onClick={() => show("reverse", m.id)}
+                        >
+                          Geri al
+                        </button>
+                      )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {!limit && total > 50 && (
+        <div className="movement-pagination">
+          <span>
+            {currentPage * 50 + 1}–{Math.min((currentPage + 1) * 50, total)} /{" "}
+            {total}
+          </span>
+          <div className="row">
+            <button
+              className="button small"
+              disabled={currentPage === 0}
+              onClick={() => setPage(currentPage - 1)}
+            >
+              Önceki
+            </button>
+            <button
+              className="button small"
+              disabled={(currentPage + 1) * 50 >= total}
+              onClick={() => setPage(currentPage + 1)}
+            >
+              Sonraki
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   ) : (
     <Empty />
   );

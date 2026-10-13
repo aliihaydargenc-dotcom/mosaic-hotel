@@ -1581,3 +1581,27 @@ html {
     position: static;
   }
 }
+
+.movement-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+.counts-panel:has(.movement-pagination) .table-wrap {
+  max-height: max(180px, calc(100dvh - 375px));
+}
+@media (max-width: 800px) {
+  .counts-panel:has(.movement-pagination) .table-wrap {
+    max-height: max(180px, calc(100dvh - 420px));
+  }
+}
+@media print {
+  .movement-pagination {
+    display: none;
+  }
+}

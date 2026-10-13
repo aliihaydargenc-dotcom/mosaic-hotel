@@ -31,3 +31,9 @@ Yönetilen PostgreSQL sağlayıcısına, gerçek Vercel hesabına veya özel dom
 OCR testleri kontrollü fakat gerçek PDF/PNG/JPEG dosyalarıyla yapıldı. Otelin tedarikçi faturalarındaki doğruluk, eğik/karanlık fotoğraflar, ambalaj dönüşümleri ve tedarikçiye özgü tablo düzenleri pilotta ölçülmeli. Önceki dönem karşılaştırması dönem verisi varsa çalışır; otelin gerçek geçmiş verisi henüz yok.
 
 Pilot sınırları ve yüksek hacimde ilişkisel tablo/sayfalama gereksinimi `MIMARI.md` içinde açıklanır. Test için oluşturulan Docker PostgreSQL servisi işi bitince kaldırıldı. Yerel ledger yalnızca açıkça işaretlenmiş örnek kayıtlara döndürüldü; test kayıtları `.local/research/` altında geliştirme kanıtı olarak saklandı.
+
+## 13 Ekim 2026 yük kontrolü ve liste sayfalaması
+
+Gerçek Vercel yayını, Neon bağlantısı ve admin girişi önceki kurulum adımlarında doğrulandı; yukarıdaki ilk teslim kaydının dağıtım yapılmadı sınırı artık güncel değildir. Bu bölümdeki yük testi ise canlı sistemde değil, ayrı yerel üretim sunucusu ve geçici PostgreSQL17 üzerinde yapıldı.
+
+100, 2.500 ve 10.000 hareketle paralel okuma/yazma kontrolü, API yanıt boyutları, stok bütünlüğü ve Chromium geçiş ölçümleri `YUK-VE-ISLETME.md` içinde yer alır. Sayım/tüketim listesi 50 kayıtlık sayfalara bölündü. 10.000 hareketli veriyle ileri/geri sayfa, 50 satır sınırı ve tüm veriyi kullanan maliyet raporu ayrıca doğrulandı. Masaüstü/mobil yerleşim ve demo ayrımı için 4 tarayıcı testi, 22 birim testi ve üretim derlemesi geçti. Tüm verinin API'den gönderilmesi ve eşzamanlı sürüm uyuşmazlıkları çözülmüş olarak sunulmaz.
