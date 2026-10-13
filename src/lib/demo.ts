@@ -4,7 +4,7 @@ import type { Actor } from "./types";
 
 export const demoActor: Actor = {
   id: "demo-manager",
-  name: "Deniz Yılmaz",
+  name: "Ali Haydar Genç",
   role: "manager",
   email: "deniz@mosaic.example",
 };

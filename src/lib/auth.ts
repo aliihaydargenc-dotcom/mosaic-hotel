@@ -6,7 +6,7 @@ import type { Actor } from "./types";
 const demos: Record<string, Actor> = {
   manager: {
     id: "local-manager",
-    name: "Deniz Yılmaz",
+    name: "Ali Haydar Genç",
     role: "manager",
     email: "manager@local",
   },

@@ -425,7 +425,7 @@ export default function Workspace({
               </Badge>
             </div>
           </header>
-          <main className="content">
+          <main key={`${tab}-${period}`} className="content screen-transition">
             {error && !modal && (
               <div className="error" role="alert">
                 {error}
@@ -1485,7 +1485,7 @@ function Configuration() {
       setUsers([
         {
           id: "demo-manager",
-          name: "Deniz Yılmaz",
+          name: "Ali Haydar Genç",
           email: "deniz@mosaic.example",
           role: "manager",
           active: true,
