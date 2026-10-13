@@ -18,8 +18,8 @@ Kurulum PDF/OCR işçilerini hazırlayıp sabit commit ve SHA-256 ile doğrulana
 
 ```bash
 npm run test
-npm run typecheck
 npm run build
+npm run typecheck
 MOSAIC_LOCAL_MODE=true npm run start
 ```
 
