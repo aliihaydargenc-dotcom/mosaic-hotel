@@ -1031,7 +1031,7 @@ function Counts() {
           )
         }
       />
-      <section className="panel">
+      <section className="panel counts-panel">
         <div className="panel-heading">
           <h2>Tüketim ve sayım hareketleri</h2>
         </div>

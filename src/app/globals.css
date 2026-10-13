@@ -1549,3 +1549,35 @@ textarea {
     margin-left: 0 !important;
   }
 }
+
+html {
+  scrollbar-gutter: stable;
+}
+.counts-panel .table-wrap {
+  max-height: max(220px, calc(100dvh - 320px));
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.counts-panel thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 1px 0 var(--line);
+}
+@media (max-width: 800px) {
+  .counts-panel .table-wrap {
+    max-height: max(220px, calc(100dvh - 365px));
+  }
+}
+@media print {
+  html {
+    scrollbar-gutter: auto;
+  }
+  .counts-panel .table-wrap {
+    max-height: none;
+    overflow: visible;
+  }
+  .counts-panel thead th {
+    position: static;
+  }
+}
